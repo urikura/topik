@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TOPIK I 韓単語マスター - Flashcard & Quiz</title>
+  <meta name="description" content="TOPIK I 1,671単語をWeb Speech API音声再生付きの選択式クイズと単語帳で効率よく覚えるWebアプリ">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="logo-container" id="logoBtn">
+      <span class="logo-badge">TOPIK I</span>
+      <span class="logo-title">韓単語マスター</span>
+    </div>
+    
+    <nav class="nav-tabs">
+      <button class="nav-btn active" id="tabQuizBtn">
+        <span>✏️</span> クイズ
+      </button>
+      <button class="nav-btn" id="tabCardBtn">
+        <span>🃏</span> 単語帳
+      </button>
+      <button class="nav-btn" id="tabSearchBtn">
+        <span>🔍</span> 辞書
+      </button>
+    </nav>
+
+    <div class="header-controls">
+      <button class="icon-btn" id="soundToggleBtn" title="効果音のON/OFF">
+        <span id="soundIcon">🔊</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-container">
+
+    <!-- 1. SETUP / CONFIG SCREEN -->
+    <section id="setupSection" class="glass-panel">
+      <div class="setup-header">
+        <h1 class="setup-title">TOPIK I 単語クイズ</h1>
+        <p class="setup-subtitle">全1,671単語から出題。音声付きクイズで韓国語力を鍛えましょう！</p>
+      </div>
+
+      <!-- Mode Selection -->
+      <div class="section-label">1. 出題モードを選択</div>
+      <div class="mode-grid">
+        <div class="mode-card selected" data-mode="jp-to-kr">
+          <span class="mode-icon">🇯🇵 ➔ 🇰🇷</span>
+          <span class="mode-name">日本語 ➔ 韓国語</span>
+          <span class="mode-desc">日本語の意味から正解の韓国語単語を選択</span>
+        </div>
+        <div class="mode-card" data-mode="kr-to-jp">
+          <span class="mode-icon">🇰🇷 ➔ 🇯🇵</span>
+          <span class="mode-name">韓国語 ➔ 日本語</span>
+          <span class="mode-desc">韓国語単語・音声から正解の日本語を選択</span>
+        </div>
+        <div class="mode-card" data-mode="mix">
+          <span class="mode-icon">🔀 ランダム</span>
+          <span class="mode-name">ミックスモード</span>
+          <span class="mode-desc">日本語➔韓国語 / 韓国語➔日本語 をランダム出題</span>
+        </div>
+      </div>
+
+      <!-- Question Count Selection -->
+      <div class="section-label">2. 問題数を選択</div>
+      <div class="count-options">
+        <button class="count-btn selected" data-count="10">10問</button>
+        <button class="count-btn" data-count="20">20問</button>
+        <button class="count-btn" data-count="50">50問</button>
+        <button class="count-btn" data-count="100">100問</button>
+        <button class="count-btn" data-count="all">全1,671問</button>
+      </div>
+
+      <!-- Settings Toggles -->
+      <div class="settings-toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-title">🔊 音声自動再生</span>
+          <span class="toggle-desc">問題が表示された際に自動で韓国語の発音を再生します</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="autoAudioToggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Start Action Buttons -->
+      <div class="action-btn-group">
+        <button class="btn-primary" id="startQuizBtn">
+          <span>🚀</span> クイズを開始する
+        </button>
+        <button class="btn-secondary" id="startFlashcardBtn">
+          <span>🃏</span> 単語帳を開く
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. QUIZ SCREEN -->
+    <section id="quizSection" class="glass-panel hidden">
+      <!-- Quiz Header Bar -->
+      <div class="quiz-header-bar">
+        <div class="progress-info" id="quizProgressText">第 1 / 10 問</div>
+        <div class="stats-group">
+          <div class="stat-badge" id="scoreBadge">⭐ Score: 0</div>
+          <div class="stat-badge" id="streakBadge"><span class="streak-fire">🔥</span> <span id="streakCount">0</span> 連続正解</div>
+        </div>
+      </div>
+
+      <!-- Progress Track -->
+      <div class="progress-track">
+        <div class="progress-fill" id="quizProgressFill"></div>
+      </div>
+
+      <!-- Prompt Card -->
+      <div class="prompt-card">
+        <div class="word-display" id="promptWord">---</div>
+        <div class="romaji-badge" id="promptRomaji">(gage)</div>
+        <button class="audio-play-btn" id="playAudioBtn">
+          <span>🔊</span> 発音を聞く
+        </button>
+      </div>
+
+      <!-- Choices Grid -->
+      <div class="options-grid" id="optionsGrid">
+        <!-- 4 choices injected via JS -->
+      </div>
+
+      <!-- Feedback Banner (shown after answering) -->
+      <div class="feedback-banner hidden" id="feedbackBanner">
+        <div class="feedback-text" id="feedbackText">
+          <span id="feedbackIcon">✅</span>
+          <span id="feedbackMsg">正解です！</span>
+        </div>
+        <button class="btn-next" id="nextQuestionBtn">次の問題へ ➔</button>
+      </div>
+    </section>
+
+    <!-- 3. RESULTS SCREEN -->
+    <section id="resultsSection" class="glass-panel hidden">
+      <div class="results-container">
+        <!-- Badge Grade Circle -->
+        <div class="results-badge-wrap">
+          <div class="rank-grade" id="resultGrade">S</div>
+          <div class="score-percent" id="resultPercent">100%</div>
+        </div>
+
+        <h2 class="results-title" id="resultTitle">素晴らしい全問正解！</h2>
+        <p class="results-subtitle" id="resultSubtitle">TOPIK I 単語マスターに一歩近づきました。</p>
+
+        <!-- Stats Summary Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-val" id="resCorrectCount">10 / 10</div>
+            <div class="stat-lbl">正解数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="resScore">100 pts</div>
+            <div class="stat-lbl">最終スコア</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="resMaxStreak">10</div>
+            <div class="stat-lbl">最高連続正解</div>
+          </div>
+        </div>
+
+        <!-- Answer Review List -->
+        <div class="review-list-header">
+          <span class="section-label" style="margin: 0;">解答振り返り</span>
+          <span class="toggle-desc" id="reviewFilterInfo">全解答リスト</span>
+        </div>
+        <div class="review-list" id="reviewList">
+          <!-- Injected via JS -->
+        </div>
+
+        <div class="action-btn-group">
+          <button class="btn-primary" id="retryQuizBtn">
+            <span>🔄</span> もう一度挑戦
+          </button>
+          <button class="btn-secondary" id="backToHomeBtn">
+            <span>🏠</span> 設定に戻る
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. FLASHCARD SCREEN -->
+    <section id="flashcardSection" class="glass-panel hidden">
+      <div class="quiz-header-bar">
+        <div class="progress-info" id="fcIndexText">1 / 1671</div>
+        <button class="btn-secondary" id="shuffleCardsBtn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+          🔀 シャッフル
+        </button>
+      </div>
+
+      <!-- 3D Flip Card -->
+      <div class="flashcard-wrapper" id="flashcardWrapper">
+        <div class="flashcard-inner">
+          <!-- Front Side: Korean Word -->
+          <div class="flashcard-front">
+            <span class="card-hint-tag">表面 (タップで裏返す)</span>
+            <div class="fc-hangul" id="fcHangul">가게</div>
+            <button class="audio-play-btn" id="fcAudioBtnFront">
+              <span>🔊</span> 発音を聞く
+            </button>
+          </div>
+          
+          <!-- Back Side: Japanese + Romaji -->
+          <div class="flashcard-back">
+            <span class="card-hint-tag">裏面</span>
+            <div class="fc-japanese" id="fcJapanese">店</div>
+            <div class="fc-romaji" id="fcRomaji">alphabet: gage</div>
+            <button class="audio-play-btn" id="fcAudioBtnBack">
+              <span>🔊</span> 再度聞く
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Navigation Controls -->
+      <div class="flashcard-nav">
+        <button class="btn-secondary" id="prevCardBtn">⬅ 前へ</button>
+        <button class="btn-secondary" id="flipCardBtn">🔄 めくる</button>
+        <button class="btn-primary" id="nextCardBtn">次へ ➔</button>
+      </div>
+    </section>
+
+    <!-- 5. DICTIONARY / SEARCH SCREEN -->
+    <section id="searchSection" class="glass-panel hidden">
+      <div class="setup-header">
+        <h2 class="setup-title">TOPIK I 単語辞書 (全1,671語)</h2>
+        <p class="setup-subtitle">韓国語、日本語、読み方（ローマ字）で検索・音声再生できます</p>
+      </div>
+
+      <div class="search-bar-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="dictSearchInput" placeholder="単語を検索 (例: 가게, 店, gage)...">
+      </div>
+
+      <div class="dict-table-wrap">
+        <table class="dict-table">
+          <thead>
+            <tr>
+              <th style="width: 70px;">No.</th>
+              <th style="width: 140px;">ハングル</th>
+              <th>日本語意味</th>
+              <th style="width: 130px;">読み方</th>
+              <th style="width: 70px;">音声</th>
+            </tr>
+          </thead>
+          <tbody id="dictTableBody">
+            <!-- Injected via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Load Data and Main Script -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
