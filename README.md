@@ -1,17 +1,17 @@
-# 🇰🇷 TOPIK I 1,671 Vocabulary Master (Flashcard & Quiz Web App)
+# 🇰🇷 TOPIK I Vocabulary Master (Flashcard & Quiz Web App)
 
-![TOPIK I Vocabulary Quiz & Flashcard App](https://img.shields.io/badge/TOPIK-1671_Words-indigo?style=for-the-badge)
+![TOPIK I Vocabulary Quiz & Flashcard App](https://img.shields.io/badge/TOPIK-Vocabulary-indigo?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-A modern, responsive Web Application designed for practicing all 1,671 TOPIK I Korean vocabulary words with real-time TTS audio pronunciation, interactive 4-choice quizzes, 3D flashcards, and live dictionary search.
+A modern, responsive Web Application designed for practicing TOPIK I Korean vocabulary words with real-time TTS audio pronunciation, interactive 4-choice quizzes, 3D flashcards, and live dictionary search.
 
 > [!NOTE]
 > **Disclaimer**
 > This project is an unofficial web application created strictly for **personal Korean language study and programming demonstration purposes**.
-> - It is **not** affiliated with, endorsed by, or associated with official TOPIK (Test of Proficiency in Korean) governing bodies, nor any third-party websites/bloggers.
+> - It is **not** affiliated with, endorsed by, or associated with official TOPIK (Test of Proficiency in Korean) governing bodies, nor any third-party websites.
 > - The vocabulary dataset was imported as a sample reference dataset available on the internet.
 > - This is a non-commercial, open-source portfolio project.
 
@@ -26,16 +26,16 @@ A modern, responsive Web Application designed for practicing all 1,671 TOPIK I K
   - **Japanese ➔ Korean**: Choose the correct Hangul word based on the Japanese meaning.
   - **Korean ➔ Japanese**: Choose the correct Japanese meaning based on the Hangul word & pronunciation.
   - **Mix Mode**: Randomly alternates between both modes.
-  - **Question Count Options**: Choose `10`, `20`, `50`, `100`, or `All 1,671` questions.
+  - **Question Count Options**: Choose `10`, `20`, `50`, `100`, or `All` questions.
 - 🎯 **Interactive 4-Choice Quiz Engine**
-  - Dynamic distractor generation from the 1,671 word database.
+  - Dynamic distractor generation from the vocabulary database.
   - Instant visual feedback, streak combo counter (🔥), correct answer highlights, and sound effects (chime/error tone via Web Audio API).
   - Keyboard shortcuts enabled (`1`, `2`, `3`, `4` to select options; `Enter` / `Space` to advance).
 - 🃏 **3D Interactive Flashcards**
   - Flip cards in 3D (Front: Hangul + Audio; Back: Japanese meaning + Romaji reading).
   - Supports shuffling and step-by-step navigation.
 - 🔍 **Live Dictionary & Search**
-  - Real-time search across all 1,671 words by Hangul, Japanese, or Romaji (e.g., `gage`).
+  - Real-time search across vocabulary words by Hangul, Japanese, or Romaji (e.g., `gage`).
 
 ---
 
@@ -43,7 +43,7 @@ A modern, responsive Web Application designed for practicing all 1,671 TOPIK I K
 
 - **Frontend**: HTML5, Vanilla CSS3 (Glassmorphism, Responsive Grid & Flexbox), JavaScript (ES6+)
 - **Audio Processing**: Web Speech API (`SpeechSynthesis`), Web Audio API (`AudioContext` for sound FX)
-- **Data Source**: `topik-1671_romaji.csv` (1,671 TOPIK I vocabulary items)
+- **Data Source**: Sample vocabulary dataset in CSV / JS format
 
 ---
 
@@ -91,7 +91,7 @@ Since this is a client-side static web app, you can easily host it for free usin
 .
 ├── index.html              # Main HTML markup & view layout
 ├── styles.css              # Dark glassmorphism stylesheet
-├── data.js                 # Structured JS dataset of 1,671 words
+├── data.js                 # Structured JS dataset of vocabulary words
 ├── app.js                  # Quiz engine, audio manager, and UI state handler
 ├── topik-1671_romaji.csv   # Raw vocabulary dataset in CSV format
 ├── .gitignore              # Git ignore rules
@@ -102,10 +102,10 @@ Since this is a client-side static web app, you can easily host it for free usin
 
 ## 🔗 Data Reference & Attribution
 
-The 1,671 TOPIK I vocabulary list used in this project is referenced from publicly available online learning materials as a sample dataset:
+The TOPIK I vocabulary list used in this project is referenced from publicly available online learning materials as a sample dataset:
 *Note: This project and its author have no affiliation or partnership with the website/author referenced below.*
 
-- **Sample Dataset Reference**: [Trilingual (trilingual.jp) - TOPIK 1 1671 Words List](https://trilingual.jp/jako/20190128-751/)
+- **Sample Dataset Reference**: [Trilingual (trilingual.jp) - TOPIK 1 Words List](https://trilingual.jp/jako/20190128-751/)
 
 ---
 
