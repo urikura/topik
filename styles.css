@@ -1,4 +1,4 @@
-/* TOPIK 1671 Flashcard & Quiz App - Stylesheet */
+/* TOPIK Flashcard & Quiz App - Stylesheet */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;600;700&display=swap');
 
@@ -40,6 +40,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -63,7 +64,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: rgba(17, 24, 39, 0.8);
+  background: rgba(17, 24, 39, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
@@ -225,24 +226,11 @@ body {
   gap: 0.5rem;
 }
 
-.mode-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
 .level-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-bottom: 2rem;
-}
-
-@media (max-width: 640px) {
-  .level-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .level-card {
@@ -314,6 +302,13 @@ body {
 .level-switch-btn.active {
   background: var(--accent-primary);
   color: #fff;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .mode-card {
@@ -593,6 +588,8 @@ input:checked + .slider:before {
   background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  line-height: 1.3;
+  word-break: break-word;
 }
 
 .romaji-badge {
@@ -645,12 +642,6 @@ input:checked + .slider:before {
   margin-bottom: 1.5rem;
 }
 
-@media (max-width: 640px) {
-  .options-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .option-card {
   background: rgba(15, 23, 42, 0.6);
   border: 2px solid var(--border-color);
@@ -665,6 +656,8 @@ input:checked + .slider:before {
   font-weight: 600;
   color: var(--text-main);
   text-align: left;
+  line-height: 1.35;
+  word-break: break-word;
 }
 
 .option-card:hover:not(.disabled) {
@@ -1107,4 +1100,275 @@ input:checked + .slider:before {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(99, 102, 241, 0.7);
+}
+
+/* ==========================================================================
+   📱 Comprehensive Mobile Responsive Optimization (6-inch Smartphones & Mobile)
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  /* App Header & Navigation */
+  .app-header {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .logo-title {
+    font-size: 1.1rem;
+  }
+
+  .nav-tabs {
+    order: 3;
+    width: 100%;
+    justify-content: space-around;
+    margin-top: 0.25rem;
+    padding: 0.25rem;
+  }
+
+  .nav-btn {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.85rem;
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* Main Container & Glass Panel */
+  .main-container {
+    padding: 0 0.65rem;
+    margin: 0.75rem auto;
+  }
+
+  .glass-panel {
+    padding: 1.25rem 1rem;
+    border-radius: var(--radius-md);
+  }
+
+  /* Setup Screen */
+  .setup-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .setup-title {
+    font-size: 1.5rem;
+  }
+
+  .setup-subtitle {
+    font-size: 0.88rem;
+  }
+
+  .level-grid, .mode-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .level-card, .mode-card {
+    padding: 0.9rem 1rem;
+  }
+
+  .level-icon {
+    font-size: 1.8rem;
+  }
+
+  .level-title {
+    font-size: 1.05rem;
+  }
+
+  .count-options {
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .count-btn {
+    min-width: 55px;
+    padding: 0.6rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .settings-toggle-row {
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .action-btn-group {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .btn-primary, .btn-secondary {
+    padding: 0.9rem 1.25rem;
+    font-size: 1rem;
+    width: 100%;
+  }
+
+  /* Quiz Screen */
+  .quiz-header-bar {
+    margin-bottom: 1rem;
+  }
+
+  .progress-info {
+    font-size: 0.95rem;
+  }
+
+  .stat-badge {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .progress-track {
+    height: 6px;
+    margin-bottom: 1.25rem;
+  }
+
+  /* Prompt Card */
+  .prompt-card {
+    padding: 1.5rem 0.85rem;
+    min-height: 160px;
+    margin-bottom: 1.25rem;
+    border-radius: var(--radius-md);
+  }
+
+  .word-display {
+    font-size: 2.1rem;
+    line-height: 1.25;
+    margin-bottom: 0.4rem;
+  }
+
+  .romaji-badge {
+    font-size: 0.85rem;
+    padding: 0.2rem 0.6rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .audio-play-btn {
+    padding: 0.55rem 1.1rem;
+    font-size: 0.88rem;
+  }
+
+  /* Options Grid */
+  .options-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .option-card {
+    padding: 0.95rem 1rem;
+    font-size: 1.02rem;
+    min-height: 52px;
+    border-radius: 12px;
+  }
+
+  .option-key {
+    width: 24px;
+    height: 24px;
+    font-size: 0.78rem;
+    margin-right: 0.6rem;
+  }
+
+  /* Feedback Banner */
+  .feedback-banner {
+    padding: 0.85rem 1rem;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .btn-next {
+    width: 100%;
+    padding: 0.75rem;
+  }
+
+  /* Results Screen */
+  .results-badge-wrap {
+    width: 110px;
+    height: 110px;
+    margin-bottom: 1rem;
+  }
+
+  .rank-grade {
+    font-size: 2.8rem;
+  }
+
+  .results-title {
+    font-size: 1.4rem;
+  }
+
+  .stats-grid {
+    gap: 0.5rem;
+  }
+
+  .stat-card {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .stat-val {
+    font-size: 1.2rem;
+  }
+
+  .review-item {
+    padding: 0.75rem 0.85rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  /* Flashcard Screen */
+  .flashcard-wrapper {
+    max-width: 100%;
+    height: 270px;
+    margin: 1.25rem auto;
+  }
+
+  .flashcard-front, .flashcard-back {
+    padding: 1.25rem 1rem;
+  }
+
+  .fc-hangul {
+    font-size: 2.5rem;
+  }
+
+  .fc-japanese {
+    font-size: 1.4rem;
+  }
+
+  .fc-romaji {
+    font-size: 0.92rem;
+    margin-bottom: 1rem;
+  }
+
+  .flashcard-nav {
+    gap: 0.5rem;
+  }
+
+  .flashcard-nav .btn-primary, .flashcard-nav .btn-secondary {
+    padding: 0.75rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  /* Dictionary Screen */
+  .search-input {
+    padding: 0.75rem 1rem 0.75rem 2.6rem;
+    font-size: 0.92rem;
+  }
+
+  .search-icon {
+    left: 0.9rem;
+  }
+
+  .dict-table th, .dict-table td {
+    padding: 0.65rem 0.4rem;
+    font-size: 0.82rem;
+  }
+
+  .dict-hangul {
+    font-size: 0.95rem;
+  }
+
+  .small-audio-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
 }
