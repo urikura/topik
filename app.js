@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     shuffleCardsBtn: document.getElementById('shuffleCardsBtn'),
 
     // Search UI
+    dictSubtitle: document.getElementById('dictSubtitle'),
     dictLevelBeginner: document.getElementById('dictLevelBeginner'),
     dictLevelIntermediate: document.getElementById('dictLevelIntermediate'),
     dictSearchInput: document.getElementById('dictSearchInput'),
@@ -173,6 +174,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- View Switching Utility ---
   function showSection(target) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
     [el.setupSection, el.quizSection, el.resultsSection, el.flashcardSection, el.searchSection].forEach(sec => {
       sec.classList.add('hidden');
     });
@@ -188,6 +192,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Helper to update question count button label
+  function updateSetupCountLabel() {
+    if (el.countAllBtn) {
+      const count = state.allWords ? state.allWords.length : 1671;
+      el.countAllBtn.textContent = `全 ${count.toLocaleString()} 問`;
+    }
+  }
+
   // --- Setup Level & Mode Event Handlers ---
   el.levelCards.forEach(card => {
     card.addEventListener('click', () => {
@@ -197,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
       state.allWords = state.datasets[state.level] || state.datasets.beginner;
       state.fcLevel = state.level;
       state.dictLevel = state.level;
+      updateSetupCountLabel();
     });
   });
 
@@ -244,6 +257,9 @@ document.addEventListener('DOMContentLoaded', () => {
     showSection(el.flashcardSection);
   });
 
+  // Initial setup label call
+  updateSetupCountLabel();
+
   // --- Quiz Generator Engine ---
   el.startQuizBtn.addEventListener('click', startNewQuiz);
   el.retryQuizBtn.addEventListener('click', startNewQuiz);
@@ -275,8 +291,30 @@ document.addEventListener('DOMContentLoaded', () => {
         currentQMode = Math.random() < 0.5 ? 'jp-to-kr' : 'kr-to-jp';
       }
 
-      const pool = state.allWords.filter(w => w.id !== wordItem.id);
-      const distractors = shuffleArray(pool).slice(0, 3);
+      // Filter pool to guarantee unique option texts
+      const pool = state.allWords.filter(w => {
+        if (w.id === wordItem.id) return false;
+        if (currentQMode === 'jp-to-kr') {
+          return w.hangul.trim() !== wordItem.hangul.trim() && w.japanese.trim() !== wordItem.japanese.trim();
+        } else {
+          return w.japanese.trim() !== wordItem.japanese.trim() && w.hangul.trim() !== wordItem.hangul.trim();
+        }
+      });
+
+      const shuffledPool = shuffleArray(pool);
+      const chosenDistractors = [];
+      const usedChoiceTexts = new Set();
+      const targetText = currentQMode === 'jp-to-kr' ? wordItem.hangul.trim() : wordItem.japanese.trim();
+      usedChoiceTexts.add(targetText);
+
+      for (const d of shuffledPool) {
+        const textVal = currentQMode === 'jp-to-kr' ? d.hangul.trim() : d.japanese.trim();
+        if (!usedChoiceTexts.has(textVal)) {
+          usedChoiceTexts.add(textVal);
+          chosenDistractors.push(d);
+          if (chosenDistractors.length === 3) break;
+        }
+      }
 
       let targetPrompt = '';
       let targetRomaji = '';
@@ -288,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
         targetRomaji = `(読み方: ${wordItem.romaji})`;
         correctOptionText = wordItem.hangul;
 
-        choices = shuffleArray([wordItem, ...distractors]).map(item => ({
+        choices = shuffleArray([wordItem, ...chosenDistractors]).map(item => ({
           text: item.hangul,
           romaji: item.romaji,
           isCorrect: item.id === wordItem.id,
@@ -299,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
         targetRomaji = `(alphabet: ${wordItem.romaji})`;
         correctOptionText = wordItem.japanese;
 
-        choices = shuffleArray([wordItem, ...distractors]).map(item => ({
+        choices = shuffleArray([wordItem, ...chosenDistractors]).map(item => ({
           text: item.japanese,
           romaji: item.romaji,
           isCorrect: item.id === wordItem.id,
@@ -430,6 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('keydown', (e) => {
     if (el.quizSection.classList.contains('hidden')) return;
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
 
     if (['1', '2', '3', '4'].includes(e.key) && !state.isAnswered) {
       const idx = parseInt(e.key, 10) - 1;
@@ -583,9 +622,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.dictLevel === 'beginner') {
       el.dictLevelBeginner.classList.add('active');
       el.dictLevelIntermediate.classList.remove('active');
+      if (el.dictSubtitle) el.dictSubtitle.textContent = '初級単語（全1,671語）を検索・音声再生できます';
     } else {
       el.dictLevelBeginner.classList.remove('active');
       el.dictLevelIntermediate.classList.add('active');
+      if (el.dictSubtitle) el.dictSubtitle.textContent = '中級単語（全2,662語）を検索・音声再生できます';
     }
   }
 
