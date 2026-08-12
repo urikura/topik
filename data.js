@@ -9352,13 +9352,13 @@ window.TOPIK_DATASETS = {
   {
     "id": 1559,
     "hangul": "퍼센트",
-    "japanese": "パーセント 1599 学校 学校",
+    "japanese": "パーセント",
     "romaji": "peosenteu"
   },
   {
     "id": 1560,
     "hangul": "페이지",
-    "japanese": "ページ 1600 学期 学期",
+    "japanese": "ページ",
     "romaji": "peiji"
   },
   {
