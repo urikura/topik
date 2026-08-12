@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TOPIK I 韓単語マスター - Flashcard & Quiz</title>
-  <meta name="description" content="TOPIK I 1,671単語をWeb Speech API音声再生付きの選択式クイズと単語帳で効率よく覚えるWebアプリ">
+  <title>TOPIK 韓単語マスター - Flashcard & Quiz</title>
+  <meta name="description" content="TOPIK 初級(1,671語)・中級(2,662語)の韓国語単語を音声再生付きの選択式クイズと単語帳で効率よく覚えるWebアプリ">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
   <!-- App Header -->
   <header class="app-header">
     <div class="logo-container" id="logoBtn">
-      <span class="logo-badge">TOPIK I</span>
+      <span class="logo-badge">TOPIK</span>
       <span class="logo-title">韓単語マスター</span>
     </div>
     
@@ -41,12 +41,31 @@
     <!-- 1. SETUP / CONFIG SCREEN -->
     <section id="setupSection" class="glass-panel">
       <div class="setup-header">
-        <h1 class="setup-title">TOPIK I 単語クイズ</h1>
-        <p class="setup-subtitle">全1,671単語から出題。音声付きクイズで韓国語力を鍛えましょう！</p>
+        <h1 class="setup-title">TOPIK 単語クイズ</h1>
+        <p class="setup-subtitle">初級・中級単語に対応。音声付きクイズで韓国語力を鍛えましょう！</p>
+      </div>
+
+      <!-- Level Selection -->
+      <div class="section-label">1. コース（難易度）を選択</div>
+      <div class="level-grid">
+        <div class="level-card selected" data-level="beginner">
+          <span class="level-icon">🌱</span>
+          <div class="level-info">
+            <span class="level-title">初級 (TOPIK I)</span>
+            <span class="level-count">全 1,671 単語</span>
+          </div>
+        </div>
+        <div class="level-card" data-level="intermediate">
+          <span class="level-icon">🌿</span>
+          <div class="level-info">
+            <span class="level-title">中級 (TOPIK II)</span>
+            <span class="level-count">全 2,662 単語</span>
+          </div>
+        </div>
       </div>
 
       <!-- Mode Selection -->
-      <div class="section-label">1. 出題モードを選択</div>
+      <div class="section-label">2. 出題モードを選択</div>
       <div class="mode-grid">
         <div class="mode-card selected" data-mode="jp-to-kr">
           <span class="mode-icon">🇯🇵 ➔ 🇰🇷</span>
@@ -66,13 +85,13 @@
       </div>
 
       <!-- Question Count Selection -->
-      <div class="section-label">2. 問題数を選択</div>
+      <div class="section-label">3. 問題数を選択</div>
       <div class="count-options">
         <button class="count-btn selected" data-count="10">10問</button>
         <button class="count-btn" data-count="20">20問</button>
         <button class="count-btn" data-count="50">50問</button>
         <button class="count-btn" data-count="100">100問</button>
-        <button class="count-btn" data-count="all">全1,671問</button>
+        <button class="count-btn" data-count="all" id="countAllBtn">全単語</button>
       </div>
 
       <!-- Settings Toggles -->
@@ -148,7 +167,7 @@
         </div>
 
         <h2 class="results-title" id="resultTitle">素晴らしい全問正解！</h2>
-        <p class="results-subtitle" id="resultSubtitle">TOPIK I 単語マスターに一歩近づきました。</p>
+        <p class="results-subtitle" id="resultSubtitle">TOPIK 単語マスターに一歩近づきました。</p>
 
         <!-- Stats Summary Grid -->
         <div class="stats-grid">
@@ -189,7 +208,13 @@
     <!-- 4. FLASHCARD SCREEN -->
     <section id="flashcardSection" class="glass-panel hidden">
       <div class="quiz-header-bar">
-        <div class="progress-info" id="fcIndexText">1 / 1671</div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div class="level-switcher">
+            <button class="level-switch-btn active" id="fcLevelBeginner">🌱 初級</button>
+            <button class="level-switch-btn" id="fcLevelIntermediate">🌿 中級</button>
+          </div>
+          <div class="progress-info" id="fcIndexText">1 / 1671</div>
+        </div>
         <button class="btn-secondary" id="shuffleCardsBtn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
           🔀 シャッフル
         </button>
@@ -230,8 +255,15 @@
     <!-- 5. DICTIONARY / SEARCH SCREEN -->
     <section id="searchSection" class="glass-panel hidden">
       <div class="setup-header">
-        <h2 class="setup-title">TOPIK I 単語辞書 (全1,671語)</h2>
-        <p class="setup-subtitle">韓国語、日本語、読み方（ローマ字）で検索・音声再生できます</p>
+        <h2 class="setup-title">TOPIK 単語辞書</h2>
+        <p class="setup-subtitle">初級・中級単語（全4,333語）を検索・音声再生できます</p>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div class="level-switcher">
+          <button class="level-switch-btn active" id="dictLevelBeginner">🌱 初級 (1,671語)</button>
+          <button class="level-switch-btn" id="dictLevelIntermediate">🌿 中級 (2,662語)</button>
+        </div>
       </div>
 
       <div class="search-bar-wrap">

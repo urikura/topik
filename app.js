@@ -1,16 +1,22 @@
-// TOPIK 1671 Flashcard & Quiz Application Logic
+// TOPIK Flashcard & Quiz Application Logic (Beginner & Intermediate Levels)
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Ensure data is loaded
-  const dataset = window.TOPIK_DATA || [];
-  if (dataset.length === 0) {
+  // Load datasets (beginner: 1,671 words, intermediate: 2,662 words)
+  const rawDatasets = window.TOPIK_DATASETS || {
+    beginner: window.TOPIK_DATA || [],
+    intermediate: []
+  };
+
+  if (!rawDatasets.beginner || rawDatasets.beginner.length === 0) {
     alert('単語データの読み込みに失敗しました。');
     return;
   }
 
   // --- App State ---
   const state = {
-    allWords: dataset,
+    datasets: rawDatasets,
+    level: 'beginner', // 'beginner' (初級: 1671) or 'intermediate' (中級: 2662)
+    allWords: rawDatasets.beginner,
     activeTab: 'quiz', // 'quiz', 'card', 'search'
     
     // Quiz Config
@@ -29,11 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
     isAnswered: false,
 
     // Flashcard Session
-    fcList: [...dataset],
+    fcLevel: 'beginner',
+    fcList: [...rawDatasets.beginner],
     fcIndex: 0,
     fcFlipped: false,
 
     // Dictionary Session
+    dictLevel: 'beginner',
     searchQuery: ''
   };
 
@@ -54,9 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
     flashcardSection: document.getElementById('flashcardSection'),
     searchSection: document.getElementById('searchSection'),
 
-    // Setup Form Controls
+    // Setup Controls
+    levelCards: document.querySelectorAll('.level-card'),
     modeCards: document.querySelectorAll('.mode-card'),
     countBtns: document.querySelectorAll('.count-btn'),
+    countAllBtn: document.getElementById('countAllBtn'),
     autoAudioToggle: document.getElementById('autoAudioToggle'),
     startQuizBtn: document.getElementById('startQuizBtn'),
     startFlashcardBtn: document.getElementById('startFlashcardBtn'),
@@ -90,6 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
     backToHomeBtn: document.getElementById('backToHomeBtn'),
 
     // Flashcard UI
+    fcLevelBeginner: document.getElementById('fcLevelBeginner'),
+    fcLevelIntermediate: document.getElementById('fcLevelIntermediate'),
     fcIndexText: document.getElementById('fcIndexText'),
     flashcardWrapper: document.getElementById('flashcardWrapper'),
     fcHangul: document.getElementById('fcHangul'),
@@ -103,6 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
     shuffleCardsBtn: document.getElementById('shuffleCardsBtn'),
 
     // Search UI
+    dictLevelBeginner: document.getElementById('dictLevelBeginner'),
+    dictLevelIntermediate: document.getElementById('dictLevelIntermediate'),
     dictSearchInput: document.getElementById('dictSearchInput'),
     dictTableBody: document.getElementById('dictTableBody')
   };
@@ -113,9 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'ko-KR';
-    utterance.rate = 0.88; // clear speech pace
+    utterance.rate = 0.88;
     
-    // Pulse animation on play buttons
     const btns = [el.playAudioBtn, el.fcAudioBtnFront, el.fcAudioBtnBack];
     btns.forEach(b => b && b.classList.add('speaking'));
 
@@ -138,16 +151,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (type === 'correct') {
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-        osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.12); // G5
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.12);
         gain.gain.setValueAtTime(0.25, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
         osc.start(ctx.currentTime);
         osc.stop(ctx.currentTime + 0.3);
       } else if (type === 'wrong') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(220, ctx.currentTime); // A3
-        osc.frequency.setValueAtTime(164.81, ctx.currentTime + 0.1); // E3
+        osc.frequency.setValueAtTime(220, ctx.currentTime);
+        osc.frequency.setValueAtTime(164.81, ctx.currentTime + 0.1);
         gain.gain.setValueAtTime(0.2, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
         osc.start(ctx.currentTime);
@@ -165,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     target.classList.remove('hidden');
 
-    // Update active tab styles
     [el.tabQuizBtn, el.tabCardBtn, el.tabSearchBtn].forEach(btn => btn.classList.remove('active'));
     if (target === el.setupSection || target === el.quizSection || target === el.resultsSection) {
       el.tabQuizBtn.classList.add('active');
@@ -176,7 +188,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- Setup Screen Event Handlers ---
+  // --- Setup Level & Mode Event Handlers ---
+  el.levelCards.forEach(card => {
+    card.addEventListener('click', () => {
+      el.levelCards.forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      state.level = card.dataset.level;
+      state.allWords = state.datasets[state.level] || state.datasets.beginner;
+      state.fcLevel = state.level;
+      state.dictLevel = state.level;
+    });
+  });
+
   el.modeCards.forEach(card => {
     card.addEventListener('click', () => {
       el.modeCards.forEach(c => c.classList.remove('selected'));
@@ -202,20 +225,22 @@ document.addEventListener('DOMContentLoaded', () => {
     el.soundIcon.textContent = state.soundFx ? '🔊' : '🔇';
   });
 
-  // Navigation Tab Buttons
+  // Nav Tab Listeners
   el.tabQuizBtn.addEventListener('click', () => showSection(el.setupSection));
   el.logoBtn.addEventListener('click', () => showSection(el.setupSection));
   el.tabCardBtn.addEventListener('click', () => {
-    initFlashcardSession();
+    initFlashcardSession(state.level);
     showSection(el.flashcardSection);
   });
   el.tabSearchBtn.addEventListener('click', () => {
+    state.dictLevel = state.level;
+    updateDictLevelButtons();
     renderDictionary();
     showSection(el.searchSection);
   });
 
   el.startFlashcardBtn.addEventListener('click', () => {
-    initFlashcardSession();
+    initFlashcardSession(state.level);
     showSection(el.flashcardSection);
   });
 
@@ -234,6 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startNewQuiz() {
+    state.allWords = state.datasets[state.level] || state.datasets.beginner;
     let totalQ = 10;
     if (state.countSetting === 'all') {
       totalQ = state.allWords.length;
@@ -241,17 +267,14 @@ document.addEventListener('DOMContentLoaded', () => {
       totalQ = parseInt(state.countSetting, 10) || 10;
     }
 
-    // Pick random sample of words for quiz
     const sampledWords = shuffleArray(state.allWords).slice(0, totalQ);
 
     state.quizQuestions = sampledWords.map(wordItem => {
-      // Determine mode for this specific question
       let currentQMode = state.mode;
       if (currentQMode === 'mix') {
         currentQMode = Math.random() < 0.5 ? 'jp-to-kr' : 'kr-to-jp';
       }
 
-      // Generate 3 distractors
       const pool = state.allWords.filter(w => w.id !== wordItem.id);
       const distractors = shuffleArray(pool).slice(0, 3);
 
@@ -271,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
           isCorrect: item.id === wordItem.id,
           rawItem: item
         }));
-      } else { // kr-to-jp
+      } else {
         targetPrompt = wordItem.hangul;
         targetRomaji = `(alphabet: ${wordItem.romaji})`;
         correctOptionText = wordItem.japanese;
@@ -310,7 +333,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const q = state.quizQuestions[state.currentIndex];
     const total = state.quizQuestions.length;
 
-    // Header info & progress
     el.quizProgressText.textContent = `第 ${state.currentIndex + 1} / ${total} 問`;
     const progressPercent = Math.round(((state.currentIndex) / total) * 100);
     el.quizProgressFill.style.width = `${progressPercent}%`;
@@ -318,22 +340,17 @@ document.addEventListener('DOMContentLoaded', () => {
     el.scoreBadge.textContent = `⭐ Score: ${state.score}`;
     el.streakCount.textContent = state.streak;
 
-    // Prompt Card
     el.promptWord.textContent = q.prompt;
     el.promptRomaji.textContent = q.romajiHint;
 
-    // Audio Play Button binding
     el.playAudioBtn.onclick = () => speakKorean(q.wordItem.hangul);
 
-    // Auto audio playback if enabled
     if (state.autoAudio) {
       speakKorean(q.wordItem.hangul);
     }
 
-    // Hide feedback banner
     el.feedbackBanner.classList.add('hidden');
 
-    // Render 4 choices
     el.optionsGrid.innerHTML = '';
     const keys = ['A', 'B', 'C', 'D'];
 
@@ -377,7 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedCard.querySelector('.option-status-icon').textContent = '✕';
       playSoundFx('wrong');
 
-      // Highlight correct card
       q.choices.forEach((ch, i) => {
         if (ch.isCorrect) {
           allCards[i].classList.add('correct');
@@ -391,18 +407,15 @@ document.addEventListener('DOMContentLoaded', () => {
       el.feedbackMsg.textContent = `不正解！ 正解: ${q.correctOptionText}`;
     }
 
-    // Save answer record
     state.userAnswers.push({
       question: q,
       selectedChoice,
       isCorrect
     });
 
-    // Update badges
     el.scoreBadge.textContent = `⭐ Score: ${state.score}`;
     el.streakCount.textContent = state.streak;
 
-    // Show feedback banner
     el.feedbackBanner.classList.remove('hidden');
   }
 
@@ -415,7 +428,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Keyboard shortcut listener for options 1-4 & Next
   document.addEventListener('keydown', (e) => {
     if (el.quizSection.classList.contains('hidden')) return;
 
@@ -442,7 +454,6 @@ document.addEventListener('DOMContentLoaded', () => {
     el.resMaxStreak.textContent = `${state.maxStreak} 回`;
     el.resultPercent.textContent = `${accuracy}%`;
 
-    // Grade calculation
     let grade = 'C';
     let title = 'もう少し練習しましょう！';
     let subtitle = '反復練習でTOPIK単語を着実に暗記しましょう。';
@@ -465,7 +476,6 @@ document.addEventListener('DOMContentLoaded', () => {
     el.resultTitle.textContent = title;
     el.resultSubtitle.textContent = subtitle;
 
-    // Render Answer Review List
     el.reviewList.innerHTML = '';
     state.userAnswers.forEach((ans, idx) => {
       const q = ans.question;
@@ -495,11 +505,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Flashcard Viewer Engine ---
-  function initFlashcardSession() {
+  function updateFcLevelButtons() {
+    if (state.fcLevel === 'beginner') {
+      el.fcLevelBeginner.classList.add('active');
+      el.fcLevelIntermediate.classList.remove('active');
+    } else {
+      el.fcLevelBeginner.classList.remove('active');
+      el.fcLevelIntermediate.classList.add('active');
+    }
+  }
+
+  function initFlashcardSession(targetLevel = 'beginner') {
+    state.fcLevel = targetLevel;
+    state.fcList = [...(state.datasets[targetLevel] || state.datasets.beginner)];
     state.fcIndex = 0;
     state.fcFlipped = false;
+    updateFcLevelButtons();
     renderFlashcard();
   }
+
+  el.fcLevelBeginner.addEventListener('click', () => initFlashcardSession('beginner'));
+  el.fcLevelIntermediate.addEventListener('click', () => initFlashcardSession('intermediate'));
 
   function renderFlashcard() {
     const item = state.fcList[state.fcIndex];
@@ -553,16 +579,38 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- Dictionary / Search Engine ---
+  function updateDictLevelButtons() {
+    if (state.dictLevel === 'beginner') {
+      el.dictLevelBeginner.classList.add('active');
+      el.dictLevelIntermediate.classList.remove('active');
+    } else {
+      el.dictLevelBeginner.classList.remove('active');
+      el.dictLevelIntermediate.classList.add('active');
+    }
+  }
+
+  el.dictLevelBeginner.addEventListener('click', () => {
+    state.dictLevel = 'beginner';
+    updateDictLevelButtons();
+    renderDictionary();
+  });
+
+  el.dictLevelIntermediate.addEventListener('click', () => {
+    state.dictLevel = 'intermediate';
+    updateDictLevelButtons();
+    renderDictionary();
+  });
+
   function renderDictionary() {
+    const list = state.datasets[state.dictLevel] || state.datasets.beginner;
     const query = state.searchQuery.trim().toLowerCase();
-    const filtered = state.allWords.filter(item => {
+    const filtered = list.filter(item => {
       if (!query) return true;
       return item.hangul.toLowerCase().includes(query) ||
              item.japanese.toLowerCase().includes(query) ||
              item.romaji.toLowerCase().includes(query);
     });
 
-    // Render up to 150 rows at a time for optimal performance
     const renderItems = filtered.slice(0, 150);
 
     el.dictTableBody.innerHTML = '';
