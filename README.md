@@ -1,4 +1,4 @@
-# 🇰🇷 TOPIK I 1,671 韓単語マスター (Flashcard & Quiz Web App)
+# 🇰🇷 TOPIK I 1,671 Vocabulary Master (Flashcard & Quiz Web App)
 
 ![TOPIK I Vocabulary Quiz & Flashcard App](https://img.shields.io/badge/TOPIK-1671_Words-indigo?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
@@ -6,111 +6,110 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-`topik-1671_romaji.csv`（全1,671単語）に対応した、ブラウザで動作するリアルタイム音声発音付きの **TOPIK I 単語クイズ＆Flashcard学習Webアプリ** です。
+A modern, responsive Web Application designed for practicing all 1,671 TOPIK I Korean vocabulary words with real-time TTS audio pronunciation, interactive 4-choice quizzes, 3D flashcards, and live dictionary search.
 
 > [!NOTE]
-> **免責事項・注意事項 (Disclaimer)**
-> 本プロジェクトは**個人の韓国語学習およびプログラミングサンプル**として製作された非公式のWebアプリケーションです。
-> - TOPIK（韓国語能力試験）公式主催機関、および単語リスト掲載元Webサイト（ブロガー等）との提携・関係は一切ありません。
-> - インターネット上で公開されている単語リストを、学習アプリ構築の**データサンプルの一例**として取り込んで利用しています。
-> - 営利目的のサービスではなく、個人学習・オープンソース開発サンプルとして公開しています。
+> **Disclaimer**
+> This project is an unofficial web application created strictly for **personal Korean language study and programming demonstration purposes**.
+> - It is **not** affiliated with, endorsed by, or associated with official TOPIK (Test of Proficiency in Korean) governing bodies, nor any third-party websites/bloggers.
+> - The vocabulary dataset was imported as a sample reference dataset available on the internet.
+> - This is a non-commercial, open-source portfolio project.
 
 ---
 
-## ✨ 主な機能
+## ✨ Features
 
-- 🔊 **リアルタイム音声再生 (Web Speech API)**
-  - 韓国語ネイティブ発音（`ko-KR`）をブラウザ標準APIでリアルタイム再生。
-  - 問題表示時の自動再生（ON/OFF切替）やボタンタップでの手動再生に対応。
-- 🔀 **多様な出題モード & 問題数設定**
-  - **日本語 ➔ 韓国語**: 日本語の意味から正解のハングルを選択。
-  - **韓国語 ➔ 日本語**: ハングル・音声から正解の日本語の意味を選択。
-  - **ミックスモード**: 2つのモードをランダム交互出題。
-  - **出題数**: `10問` / `20問` / `50問` / `100問` / `全1,671問`。
-- 🎯 **4肢選択式クイズエンジン & フィードバック**
-  - 1,671単語のデータベースから動的にダミー選択肢を生成。
-  - 正解判定、コンボ（🔥 連続正解）カウント、正解選択肢の強調、合成サウンドエフェクト（チャイム/エラー音）。
-  - キーボード操作（`1`〜`4` キーで回答、`Enter` / `Space` で次へ進む）に対応。
-- 🃏 **3Dカードめくり単語帳モード**
-  - カードの表面（ハングル）と裏面（日本語＋読み方ローマ字）を立体的にめくって暗記学習。シャッフル機能付き。
-- 🔍 **全1,671語のライブ辞書検索**
-  - ハングル、日本語、読み方（ローマ字 `gage` など）でのリアルタイム検索・発音試聴。
-
----
-
-## 🛠️ 技術スタック
-
-- **フロントエンド**: HTML5, Vanilla CSS3 (Glassmorphism, Dynamic Grid/Flexbox), JavaScript (ES6+)
-- **音声処理**: Web Speech API (`SpeechSynthesis`), Web Audio API (`AudioContext` 効果音)
-- **データ**: `topik-1671_romaji.csv` (1,671 TOPIK I 単語)
+- 🔊 **Real-Time Korean Audio (Web Speech API)**
+  - Native Korean pronunciation (`ko-KR`) rendered using browser-standard Web Speech API.
+  - Supports automatic audio playback on new questions (toggle ON/OFF) and manual audio playback on click.
+- 🔀 **Multiple Quiz Modes & Question Customization**
+  - **Japanese ➔ Korean**: Choose the correct Hangul word based on the Japanese meaning.
+  - **Korean ➔ Japanese**: Choose the correct Japanese meaning based on the Hangul word & pronunciation.
+  - **Mix Mode**: Randomly alternates between both modes.
+  - **Question Count Options**: Choose `10`, `20`, `50`, `100`, or `All 1,671` questions.
+- 🎯 **Interactive 4-Choice Quiz Engine**
+  - Dynamic distractor generation from the 1,671 word database.
+  - Instant visual feedback, streak combo counter (🔥), correct answer highlights, and sound effects (chime/error tone via Web Audio API).
+  - Keyboard shortcuts enabled (`1`, `2`, `3`, `4` to select options; `Enter` / `Space` to advance).
+- 🃏 **3D Interactive Flashcards**
+  - Flip cards in 3D (Front: Hangul + Audio; Back: Japanese meaning + Romaji reading).
+  - Supports shuffling and step-by-step navigation.
+- 🔍 **Live Dictionary & Search**
+  - Real-time search across all 1,671 words by Hangul, Japanese, or Romaji (e.g., `gage`).
 
 ---
 
-## 🚀 ローカルでの実行方法
+## 🛠️ Tech Stack
 
-特別なビルドツールのインストールは不要です。ファイルをダウンロードして開くだけで動作します。
+- **Frontend**: HTML5, Vanilla CSS3 (Glassmorphism, Responsive Grid & Flexbox), JavaScript (ES6+)
+- **Audio Processing**: Web Speech API (`SpeechSynthesis`), Web Audio API (`AudioContext` for sound FX)
+- **Data Source**: `topik-1671_romaji.csv` (1,671 TOPIK I vocabulary items)
 
-### 方法 1: ローカルサーバーで実行 (推奨)
+---
+
+## 🚀 Getting Started
+
+No complex build step or framework installation required! Runs directly in any modern web browser.
+
+### Option 1: Run with Local Web Server (Recommended)
 
 ```bash
-# リポジトリのクローン
+# Clone the repository
 git clone https://github.com/YOUR_USERNAME/topik-quiz-app.git
 cd topik-quiz-app
 
-# 簡易Webサーバーの起動 (例: npx serve)
+# Start local server (e.g. via npx serve)
 npx serve .
 
-# または Python をお使いの場合
+# Or using Python 3
 python3 -m http.server 8080
 ```
 
-ブラウザで `http://localhost:8080` にアクセスしてください。
+Open `http://localhost:8080` in your web browser.
 
-### 方法 2: ブラウザで直接開く
+### Option 2: Open Directly in Browser
 
-`index.html` ファイルをダブルクリックするか、お使いのブラウザにドラッグ＆ドロップしてください。
-
----
-
-## 🌐 GitHub Pages への公開手順 (無料ホスティング)
-
-このリポジトリは完全なフロントエンド静的Webアプリのため、**GitHub Pages** で簡単に無料公開できます。
-
-1. GitHubでリポジトリを作成し、コードをプッシュします（下記のコマンドを参照）。
-2. GitHubリポジトリの **Settings** ➔ **Pages** を開きます。
-3. **Build and deployment** の Source で `Deploy from a branch` を選択します。
-4. Branch を `main` / `/ (root)` に設定して **Save** をクリックします。
-5. 数分後に `https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/` でアプリが公開されます！
+Simply double-click `index.html` or drag and drop it into your preferred web browser.
 
 ---
 
-## 📂 ファイル構成
+## 🌐 Free Deployment via GitHub Pages
+
+Since this is a client-side static web app, you can easily host it for free using **GitHub Pages**:
+
+1. Create a repository on GitHub and push the code (see commands below).
+2. Navigate to repository **Settings** ➔ **Pages**.
+3. Under **Build and deployment**, set Source to `Deploy from a branch`.
+4. Select `main` branch and `/ (root)` folder, then click **Save**.
+5. Your live app will be accessible at `https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/` in a few minutes!
+
+---
+
+## 📂 File Structure
 
 ```text
 .
-├── index.html              # メインHTML（UIレイアウト）
-├── styles.css              # ダークグラスモフィズムCSSスタイル
-├── data.js                 # 1,671単語データセット
-├── app.js                  # クイズエンジン・音声合成・UI制御ロジック
-├── topik-1671_romaji.csv   # 元単語データCSV
-├── .gitignore              # Git除外設定
-└── README.md               # 本ドキュメント
+├── index.html              # Main HTML markup & view layout
+├── styles.css              # Dark glassmorphism stylesheet
+├── data.js                 # Structured JS dataset of 1,671 words
+├── app.js                  # Quiz engine, audio manager, and UI state handler
+├── topik-1671_romaji.csv   # Raw vocabulary dataset in CSV format
+├── .gitignore              # Git ignore rules
+└── README.md               # Project documentation
 ```
 
 ---
 
-## 🔗 参考データ出典 (Attribution)
+## 🔗 Data Reference & Attribution
 
-本アプリに組み込んでいる単語データ（1,671語）は、インターネット上で公開されている学習用単語リストの一例として、以下のWebページを参照・利用させていただいております。
-※本プロジェクトおよび作者は、以下のWebサイト運営者・ブロガー様とは提携・特別な関係を有しておりません。
+The 1,671 TOPIK I vocabulary list used in this project is referenced from publicly available online learning materials as a sample dataset:
+*Note: This project and its author have no affiliation or partnership with the website/author referenced below.*
 
-- **参照データ元**: [トリリンガル (trilingual.jp) - 【TOPIK1】初級単語リスト1671語](https://trilingual.jp/jako/20190128-751/)
+- **Sample Dataset Reference**: [Trilingual (trilingual.jp) - TOPIK 1 1671 Words List](https://trilingual.jp/jako/20190128-751/)
 
 ---
 
-## 📝 ライセンス
+## 📝 License
 
-- **プログラム（コード）**: [MIT License](LICENSE)（個人・商用を問わず自由にご利用・改変いただけます）
-- **単語データ**: 学習アプリのサンプルデータとして利用しています。
-
-
+- **Source Code**: [MIT License](LICENSE) (Free to use, modify, and distribute).
+- **Vocabulary Data**: Used as a sample dataset for educational and learning purposes.
