@@ -2,9 +2,14 @@
 .DS_Store
 Thumbs.db
 
+# PDF Files
+*.pdf
+topik-1671.pdf
+
 # Logs & Temporary Files
 *.log
 npm-debug.log*
 
 # Node Modules (if any)
 node_modules/
+
