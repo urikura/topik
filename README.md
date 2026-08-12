@@ -1,6 +1,6 @@
 # 🇰🇷 TOPIK I Vocabulary Master (Flashcard & Quiz Web App)
 
-![TOPIK I Vocabulary Quiz & Flashcard App](https://img.shields.io/badge/TOPIK-Vocabulary-indigo?style=for-the-badge)
+![TOPIK I Vocabulary Quiz & Flashcard App](https://img.shields.io/badge/TOPIK-1671_Words-indigo?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
@@ -26,16 +26,16 @@ A modern, responsive Web Application designed for practicing TOPIK I Korean voca
   - **Japanese ➔ Korean**: Choose the correct Hangul word based on the Japanese meaning.
   - **Korean ➔ Japanese**: Choose the correct Japanese meaning based on the Hangul word & pronunciation.
   - **Mix Mode**: Randomly alternates between both modes.
-  - **Question Count Options**: Choose `10`, `20`, `50`, `100`, or `All` questions.
+  - **Question Count Options**: Choose `10`, `20`, `50`, `100`, or `All 1,671` questions.
 - 🎯 **Interactive 4-Choice Quiz Engine**
-  - Dynamic distractor generation from the vocabulary database.
+  - Dynamic distractor generation from the 1,671 word database.
   - Instant visual feedback, streak combo counter (🔥), correct answer highlights, and sound effects (chime/error tone via Web Audio API).
   - Keyboard shortcuts enabled (`1`, `2`, `3`, `4` to select options; `Enter` / `Space` to advance).
 - 🃏 **3D Interactive Flashcards**
   - Flip cards in 3D (Front: Hangul + Audio; Back: Japanese meaning + Romaji reading).
   - Supports shuffling and step-by-step navigation.
 - 🔍 **Live Dictionary & Search**
-  - Real-time search across vocabulary words by Hangul, Japanese, or Romaji (e.g., `gage`).
+  - Real-time search across all 1,671 words by Hangul, Japanese, or Romaji (e.g., `gage`).
 
 ---
 
@@ -43,7 +43,7 @@ A modern, responsive Web Application designed for practicing TOPIK I Korean voca
 
 - **Frontend**: HTML5, Vanilla CSS3 (Glassmorphism, Responsive Grid & Flexbox), JavaScript (ES6+)
 - **Audio Processing**: Web Speech API (`SpeechSynthesis`), Web Audio API (`AudioContext` for sound FX)
-- **Data Source**: Sample vocabulary dataset in CSV / JS format
+- **Data Source**: `topik-1671_romaji.csv` (1,671 TOPIK I vocabulary items with Japanese meanings and Romaji readings)
 
 ---
 
@@ -73,25 +73,13 @@ Simply double-click `index.html` or drag and drop it into your preferred web bro
 
 ---
 
-## 🌐 Free Deployment via GitHub Pages
-
-Since this is a client-side static web app, you can easily host it for free using **GitHub Pages**:
-
-1. Create a repository on GitHub and push the code (see commands below).
-2. Navigate to repository **Settings** ➔ **Pages**.
-3. Under **Build and deployment**, set Source to `Deploy from a branch`.
-4. Select `main` branch and `/ (root)` folder, then click **Save**.
-5. Your live app will be accessible at `https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/` in a few minutes!
-
----
-
 ## 📂 File Structure
 
 ```text
 .
 ├── index.html              # Main HTML markup & view layout
 ├── styles.css              # Dark glassmorphism stylesheet
-├── data.js                 # Structured JS dataset of vocabulary words
+├── data.js                 # Structured JS dataset of 1,671 words
 ├── app.js                  # Quiz engine, audio manager, and UI state handler
 ├── topik-1671_romaji.csv   # Raw vocabulary dataset in CSV format
 ├── .gitignore              # Git ignore rules
@@ -102,10 +90,10 @@ Since this is a client-side static web app, you can easily host it for free usin
 
 ## 🔗 Data Reference & Attribution
 
-The TOPIK I vocabulary list used in this project is referenced from publicly available online learning materials as a sample dataset:
+The 1,671 TOPIK I vocabulary list used in this project is referenced from publicly available online learning materials as a sample dataset:
 *Note: This project and its author have no affiliation or partnership with the website/author referenced below.*
 
-- **Sample Dataset Reference**: [Trilingual (trilingual.jp) - TOPIK 1 Words List](https://trilingual.jp/jako/20190128-751/)
+- **Sample Dataset Reference**: [Trilingual (trilingual.jp) - TOPIK 1 1671 Words List](https://trilingual.jp/jako/20190128-751/)
 
 ---
 
