@@ -89,10 +89,9 @@ Simply double-click `index.html` or drag and drop it into your preferred web bro
 
 ---
 
-## 🔗 Data Reference & Attribution
+## 🔗 Data Reference & Acknowledgments
 
-The vocabulary datasets used in this project are referenced from publicly available online learning materials as sample datasets:
-*Note: This project and its author have no affiliation or partnership with the website/author referenced below.*
+Special thanks to [Trilingual](https://trilingual.jp/) for creating and sharing publicly available learning materials. The vocabulary data in this project was referenced from their wonderful word lists as sample datasets for learning and practice:
 
 - **Beginner Dataset Reference**: [Trilingual (trilingual.jp) - TOPIK 1 Words List](https://trilingual.jp/jako/20190128-751/)
 - **Intermediate Dataset Reference**: [Trilingual (trilingual.jp) - TOPIK 2 Intermediate Words List](https://trilingual.jp/jako/20190307-1161/)
