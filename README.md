@@ -79,9 +79,10 @@ Simply double-click `index.html` or drag and drop it into your preferred web bro
 .
 ├── index.html              # Main HTML markup & view layout
 ├── styles.css              # Dark glassmorphism stylesheet
-├── data.js                 # Structured JS dataset of 1,671 words
+├── data.js                 # Structured JS dataset of Beginner & Intermediate words
 ├── app.js                  # Quiz engine, audio manager, and UI state handler
-├── topik-1671_romaji.csv   # Raw vocabulary dataset in CSV format
+├── topik-1671_romaji.csv   # Beginner vocabulary dataset in CSV format
+├── topik-2662_romaji.csv   # Intermediate vocabulary dataset in CSV format
 ├── .gitignore              # Git ignore rules
 └── README.md               # Project documentation
 ```
@@ -90,14 +91,16 @@ Simply double-click `index.html` or drag and drop it into your preferred web bro
 
 ## 🔗 Data Reference & Attribution
 
-The 1,671 TOPIK I vocabulary list used in this project is referenced from publicly available online learning materials as a sample dataset:
+The vocabulary datasets used in this project are referenced from publicly available online learning materials as sample datasets:
 *Note: This project and its author have no affiliation or partnership with the website/author referenced below.*
 
-- **Sample Dataset Reference**: [Trilingual (trilingual.jp) - TOPIK 1 1671 Words List](https://trilingual.jp/jako/20190128-751/)
+- **Beginner Dataset Reference**: [Trilingual (trilingual.jp) - TOPIK 1 Words List](https://trilingual.jp/jako/20190128-751/)
+- **Intermediate Dataset Reference**: [Trilingual (trilingual.jp) - TOPIK 2 Intermediate Words List](https://trilingual.jp/jako/20190307-1161/)
 
 ---
 
 ## 📝 License
 
 - **Source Code**: [MIT License](LICENSE) (Free to use, modify, and distribute).
-- **Vocabulary Data**: Used as a sample dataset for educational and learning purposes.
+- **Vocabulary Data**: Used as sample datasets for educational and learning purposes.
+
