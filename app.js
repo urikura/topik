@@ -340,10 +340,26 @@ document.addEventListener('DOMContentLoaded', () => {
   [el.sourceAllCard, el.sourceWrongCard].forEach(card => {
     if (!card) return;
     card.addEventListener('click', () => {
-      if (card.classList.contains('disabled')) return;
+      const src = card.dataset.source;
+      if (src === 'wrong') {
+        const data = getWrongData();
+        const currentCount = (data[state.level] || []).length;
+        if (currentCount === 0) {
+          const otherLevel = state.level === 'beginner' ? 'intermediate' : 'beginner';
+          const otherCount = (data[otherLevel] || []).length;
+          const currentLabel = state.level === 'beginner' ? '初級' : '中級';
+          const otherLabel = otherLevel === 'beginner' ? '初級' : '中級';
+          if (otherCount > 0) {
+            alert(`【${currentLabel}】にはまだ誤答データがありません。\n（${otherLabel}には ${otherCount} 件の誤答があります。難易度を【${otherLabel}】に切り替えてお試しください！）`);
+          } else {
+            alert('現在、誤答ノートは空です！\nまずは「全単語から出題」でクイズに挑戦し、間違えた問題を自動記録させましょう！');
+          }
+          return;
+        }
+      }
       [el.sourceAllCard, el.sourceWrongCard].forEach(c => c && c.classList.remove('selected'));
       card.classList.add('selected');
-      state.source = card.dataset.source;
+      state.source = src;
     });
   });
 
@@ -757,9 +773,16 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="wrong-empty-state">
             <div class="wrong-empty-icon">🎉</div>
             <div class="wrong-empty-title">誤答ノートは空です！</div>
-            <p>クイズで間違えた問題がここに自動記録されます。</p>
+            <p style="margin-bottom: 1.25rem;">クイズで間違えた問題がここに自動記録されます。</p>
+            <button class="btn-primary" id="wrongEmptyStartBtn" style="padding: 0.65rem 1.25rem; font-size: 0.95rem;">
+              <span>✏️</span> クイズを開始して単語をテストする
+            </button>
           </div>
         `;
+        const emptyBtn = document.getElementById('wrongEmptyStartBtn');
+        if (emptyBtn) {
+          emptyBtn.onclick = () => showSection(el.setupSection);
+        }
         return;
       }
 
@@ -796,6 +819,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (el.startWrongQuizBtn) {
     el.startWrongQuizBtn.addEventListener('click', () => {
+      const wrongIds = getWrongData()[state.wrongLevel] || [];
+      if (wrongIds.length === 0) {
+        alert(`【${state.wrongLevel === 'beginner' ? '初級' : '中級'}】には保存された誤答単語がありません。\nまずは全単語クイズで単語テストを行いましょう！`);
+        return;
+      }
       state.level = state.wrongLevel;
       state.source = 'wrong';
       el.levelCards.forEach(c => {
@@ -811,7 +839,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const allWords = state.datasets[state.wrongLevel] || state.datasets.beginner;
       const wrongWords = allWords.filter(w => wrongIds.includes(w.id));
       if (wrongWords.length === 0) {
-        alert('復習対象の誤答単語がありません。');
+        alert(`【${state.wrongLevel === 'beginner' ? '初級' : '中級'}】には復習対象の誤答単語がありません。`);
         return;
       }
       state.fcLevel = state.wrongLevel;
@@ -826,7 +854,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (el.clearWrongBtn) {
     el.clearWrongBtn.addEventListener('click', () => {
-      if (confirm(`【${state.wrongLevel === 'beginner' ? '初級' : '中級'}】の誤答ノートを一括クリアしますか？`)) {
+      const wrongIds = getWrongData()[state.wrongLevel] || [];
+      if (wrongIds.length === 0) {
+        alert(`【${state.wrongLevel === 'beginner' ? '初級' : '中級'}】の誤答ノートはすでに空です。`);
+        return;
+      }
+      if (confirm(`【${state.wrongLevel === 'beginner' ? '初級' : '中級'}】の誤答ノート（${wrongIds.length}件）を一括クリアしますか？`)) {
         clearWrongWords(state.wrongLevel);
       }
     });

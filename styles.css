@@ -1456,9 +1456,9 @@ input:checked + .slider:before {
 }
 
 .source-card.disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  filter: grayscale(0.8);
+  opacity: 0.75;
+  cursor: pointer;
+  border-style: dashed;
 }
 
 .source-icon {
