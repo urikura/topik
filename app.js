@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Quiz Config
     mode: 'jp-to-kr', // 'jp-to-kr', 'kr-to-jp', 'mix'
+    source: 'all', // 'all' or 'wrong'
     countSetting: '10', // '10', '20', '50', '100', 'all'
     autoAudio: true,
     soundFx: true,
@@ -33,6 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
     maxStreak: 0,
     userAnswers: [],
     isAnswered: false,
+
+    // Wrong Words Session
+    wrongLevel: 'beginner',
 
     // Flashcard Session
     fcLevel: 'beginner',
@@ -49,6 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const el = {
     // Nav Tabs
     tabQuizBtn: document.getElementById('tabQuizBtn'),
+    tabWrongBtn: document.getElementById('tabWrongBtn'),
+    navWrongBadge: document.getElementById('navWrongBadge'),
     tabCardBtn: document.getElementById('tabCardBtn'),
     tabSearchBtn: document.getElementById('tabSearchBtn'),
     logoBtn: document.getElementById('logoBtn'),
@@ -59,12 +65,17 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSection: document.getElementById('setupSection'),
     quizSection: document.getElementById('quizSection'),
     resultsSection: document.getElementById('resultsSection'),
+    wrongSection: document.getElementById('wrongSection'),
     flashcardSection: document.getElementById('flashcardSection'),
     searchSection: document.getElementById('searchSection'),
 
     // Setup Controls
     levelCards: document.querySelectorAll('.level-card'),
     modeCards: document.querySelectorAll('.mode-card'),
+    sourceAllCard: document.getElementById('sourceAllCard'),
+    sourceWrongCard: document.getElementById('sourceWrongCard'),
+    sourceAllDesc: document.getElementById('sourceAllDesc'),
+    sourceWrongDesc: document.getElementById('sourceWrongDesc'),
     countBtns: document.querySelectorAll('.count-btn'),
     countAllBtn: document.getElementById('countAllBtn'),
     autoAudioToggle: document.getElementById('autoAudioToggle'),
@@ -96,8 +107,18 @@ document.addEventListener('DOMContentLoaded', () => {
     resScore: document.getElementById('resScore'),
     resMaxStreak: document.getElementById('resMaxStreak'),
     reviewList: document.getElementById('reviewList'),
+    retryWrongBtn: document.getElementById('retryWrongBtn'),
     retryQuizBtn: document.getElementById('retryQuizBtn'),
     backToHomeBtn: document.getElementById('backToHomeBtn'),
+
+    // Wrong Section UI
+    wrongLevelBeginner: document.getElementById('wrongLevelBeginner'),
+    wrongLevelIntermediate: document.getElementById('wrongLevelIntermediate'),
+    wrongTotalText: document.getElementById('wrongTotalText'),
+    startWrongQuizBtn: document.getElementById('startWrongQuizBtn'),
+    startWrongFcBtn: document.getElementById('startWrongFcBtn'),
+    clearWrongBtn: document.getElementById('clearWrongBtn'),
+    wrongList: document.getElementById('wrongList'),
 
     // Flashcard UI
     fcLevelBeginner: document.getElementById('fcLevelBeginner'),
@@ -177,18 +198,112 @@ document.addEventListener('DOMContentLoaded', () => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
-    [el.setupSection, el.quizSection, el.resultsSection, el.flashcardSection, el.searchSection].forEach(sec => {
-      sec.classList.add('hidden');
+    [el.setupSection, el.quizSection, el.resultsSection, el.wrongSection, el.flashcardSection, el.searchSection].forEach(sec => {
+      if (sec) sec.classList.add('hidden');
     });
-    target.classList.remove('hidden');
+    if (target) target.classList.remove('hidden');
 
-    [el.tabQuizBtn, el.tabCardBtn, el.tabSearchBtn].forEach(btn => btn.classList.remove('active'));
+    [el.tabQuizBtn, el.tabWrongBtn, el.tabCardBtn, el.tabSearchBtn].forEach(btn => btn && btn.classList.remove('active'));
     if (target === el.setupSection || target === el.quizSection || target === el.resultsSection) {
-      el.tabQuizBtn.classList.add('active');
+      if (el.tabQuizBtn) el.tabQuizBtn.classList.add('active');
+    } else if (target === el.wrongSection) {
+      if (el.tabWrongBtn) el.tabWrongBtn.classList.add('active');
     } else if (target === el.flashcardSection) {
-      el.tabCardBtn.classList.add('active');
+      if (el.tabCardBtn) el.tabCardBtn.classList.add('active');
     } else if (target === el.searchSection) {
-      el.tabSearchBtn.classList.add('active');
+      if (el.tabSearchBtn) el.tabSearchBtn.classList.add('active');
+    }
+  }
+
+  // --- LocalStorage Manager for Wrong Words ---
+  const WRONG_STORAGE_KEY = 'topik_wrong_words_v1';
+
+  function getWrongData() {
+    try {
+      const raw = localStorage.getItem(WRONG_STORAGE_KEY);
+      if (!raw) return { beginner: [], intermediate: [] };
+      const parsed = JSON.parse(raw);
+      return {
+        beginner: Array.isArray(parsed.beginner) ? parsed.beginner : [],
+        intermediate: Array.isArray(parsed.intermediate) ? parsed.intermediate : []
+      };
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+      return { beginner: [], intermediate: [] };
+    }
+  }
+
+  function saveWrongData(data) {
+    try {
+      localStorage.setItem(WRONG_STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.warn('LocalStorage save error:', e);
+    }
+  }
+
+  function addWrongWord(level, wordId) {
+    const data = getWrongData();
+    const list = data[level] || [];
+    if (!list.includes(wordId)) {
+      list.push(wordId);
+      data[level] = list;
+      saveWrongData(data);
+    }
+    updateWrongUI();
+  }
+
+  function removeWrongWord(level, wordId) {
+    const data = getWrongData();
+    let list = data[level] || [];
+    if (list.includes(wordId)) {
+      data[level] = list.filter(id => id !== wordId);
+      saveWrongData(data);
+    }
+    updateWrongUI();
+  }
+
+  function clearWrongWords(level) {
+    const data = getWrongData();
+    data[level] = [];
+    saveWrongData(data);
+    updateWrongUI();
+  }
+
+  function updateWrongUI() {
+    const data = getWrongData();
+    const currentLevelWrongCount = (data[state.level] || []).length;
+    const totalWrongCount = (data.beginner || []).length + (data.intermediate || []).length;
+
+    // Update Nav Tab Badge
+    if (el.navWrongBadge) {
+      if (totalWrongCount > 0) {
+        el.navWrongBadge.textContent = totalWrongCount;
+        el.navWrongBadge.classList.remove('hidden');
+      } else {
+        el.navWrongBadge.classList.add('hidden');
+      }
+    }
+
+    // Update Setup Source Cards
+    if (el.sourceWrongDesc) {
+      el.sourceWrongDesc.textContent = `誤答リスト (${currentLevelWrongCount}件) から集中出題`;
+    }
+    if (el.sourceWrongCard) {
+      if (currentLevelWrongCount === 0) {
+        el.sourceWrongCard.classList.add('disabled');
+        if (state.source === 'wrong') {
+          state.source = 'all';
+          if (el.sourceAllCard) el.sourceAllCard.classList.add('selected');
+          el.sourceWrongCard.classList.remove('selected');
+        }
+      } else {
+        el.sourceWrongCard.classList.remove('disabled');
+      }
+    }
+
+    // If wrongSection is visible, render its list
+    if (el.wrongSection && !el.wrongSection.classList.contains('hidden')) {
+      renderWrongSection();
     }
   }
 
@@ -210,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
       state.fcLevel = state.level;
       state.dictLevel = state.level;
       updateSetupCountLabel();
+      updateWrongUI();
     });
   });
 
@@ -218,6 +334,16 @@ document.addEventListener('DOMContentLoaded', () => {
       el.modeCards.forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       state.mode = card.dataset.mode;
+    });
+  });
+
+  [el.sourceAllCard, el.sourceWrongCard].forEach(card => {
+    if (!card) return;
+    card.addEventListener('click', () => {
+      if (card.classList.contains('disabled')) return;
+      [el.sourceAllCard, el.sourceWrongCard].forEach(c => c && c.classList.remove('selected'));
+      card.classList.add('selected');
+      state.source = card.dataset.source;
     });
   });
 
@@ -239,26 +365,33 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Nav Tab Listeners
-  el.tabQuizBtn.addEventListener('click', () => showSection(el.setupSection));
-  el.logoBtn.addEventListener('click', () => showSection(el.setupSection));
-  el.tabCardBtn.addEventListener('click', () => {
+  if (el.tabQuizBtn) el.tabQuizBtn.addEventListener('click', () => showSection(el.setupSection));
+  if (el.logoBtn) el.logoBtn.addEventListener('click', () => showSection(el.setupSection));
+  if (el.tabWrongBtn) el.tabWrongBtn.addEventListener('click', () => {
+    state.wrongLevel = state.level;
+    updateWrongLevelButtons();
+    renderWrongSection();
+    showSection(el.wrongSection);
+  });
+  if (el.tabCardBtn) el.tabCardBtn.addEventListener('click', () => {
     initFlashcardSession(state.level);
     showSection(el.flashcardSection);
   });
-  el.tabSearchBtn.addEventListener('click', () => {
+  if (el.tabSearchBtn) el.tabSearchBtn.addEventListener('click', () => {
     state.dictLevel = state.level;
     updateDictLevelButtons();
     renderDictionary();
     showSection(el.searchSection);
   });
 
-  el.startFlashcardBtn.addEventListener('click', () => {
+  if (el.startFlashcardBtn) el.startFlashcardBtn.addEventListener('click', () => {
     initFlashcardSession(state.level);
     showSection(el.flashcardSection);
   });
 
-  // Initial setup label call
+  // Initial setup call
   updateSetupCountLabel();
+  updateWrongUI();
 
   // --- Quiz Generator Engine ---
   el.startQuizBtn.addEventListener('click', startNewQuiz);
@@ -276,14 +409,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function startNewQuiz() {
     state.allWords = state.datasets[state.level] || state.datasets.beginner;
-    let totalQ = 10;
-    if (state.countSetting === 'all') {
-      totalQ = state.allWords.length;
-    } else {
-      totalQ = parseInt(state.countSetting, 10) || 10;
+
+    let candidatePool = [...state.allWords];
+    if (state.source === 'wrong') {
+      const wrongIds = getWrongData()[state.level] || [];
+      candidatePool = state.allWords.filter(w => wrongIds.includes(w.id));
+      if (candidatePool.length === 0) {
+        alert('現在保存されている誤答単語がありません。全単語モードで出題します。');
+        state.source = 'all';
+        candidatePool = [...state.allWords];
+        if (el.sourceAllCard) el.sourceAllCard.classList.add('selected');
+        if (el.sourceWrongCard) el.sourceWrongCard.classList.remove('selected');
+      }
     }
 
-    const sampledWords = shuffleArray(state.allWords).slice(0, totalQ);
+    let totalQ = 10;
+    if (state.countSetting === 'all') {
+      totalQ = candidatePool.length;
+    } else {
+      totalQ = Math.min(parseInt(state.countSetting, 10) || 10, candidatePool.length);
+    }
+
+    const sampledWords = shuffleArray(candidatePool).slice(0, totalQ);
 
     state.quizQuestions = sampledWords.map(wordItem => {
       let currentQMode = state.mode;
@@ -424,6 +571,11 @@ document.addEventListener('DOMContentLoaded', () => {
       state.streak += 1;
       if (state.streak > state.maxStreak) state.maxStreak = state.streak;
 
+      // If answering in wrong mode and correct, remove from wrong list (overcome!)
+      if (state.source === 'wrong') {
+        removeWrongWord(state.level, q.wordItem.id);
+      }
+
       el.feedbackText.className = 'feedback-text is-correct';
       el.feedbackIcon.textContent = '🎉';
       el.feedbackMsg.textContent = '正解です！';
@@ -431,6 +583,9 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedCard.classList.add('wrong');
       selectedCard.querySelector('.option-status-icon').textContent = '✕';
       playSoundFx('wrong');
+
+      // Record wrong answer in LocalStorage!
+      addWrongWord(state.level, q.wordItem.id);
 
       q.choices.forEach((ch, i) => {
         if (ch.isCorrect) {
@@ -515,6 +670,21 @@ document.addEventListener('DOMContentLoaded', () => {
     el.resultTitle.textContent = title;
     el.resultSubtitle.textContent = subtitle;
 
+    // Retry Wrong Questions Button Handler
+    const wrongAnswersInSession = state.userAnswers.filter(a => !a.isCorrect);
+    if (el.retryWrongBtn) {
+      if (wrongAnswersInSession.length > 0) {
+        el.retryWrongBtn.classList.remove('hidden');
+        el.retryWrongBtn.textContent = `⚠️ 今回間違えた ${wrongAnswersInSession.length} 問だけで再挑戦`;
+        el.retryWrongBtn.onclick = () => {
+          state.source = 'wrong';
+          startNewQuiz();
+        };
+      } else {
+        el.retryWrongBtn.classList.add('hidden');
+      }
+    }
+
     el.reviewList.innerHTML = '';
     state.userAnswers.forEach((ans, idx) => {
       const q = ans.question;
@@ -540,6 +710,125 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       el.reviewList.appendChild(item);
+    });
+  }
+
+  // --- Wrong Review Engine ---
+  function updateWrongLevelButtons() {
+    if (state.wrongLevel === 'beginner') {
+      if (el.wrongLevelBeginner) el.wrongLevelBeginner.classList.add('active');
+      if (el.wrongLevelIntermediate) el.wrongLevelIntermediate.classList.remove('active');
+    } else {
+      if (el.wrongLevelBeginner) el.wrongLevelBeginner.classList.remove('active');
+      if (el.wrongLevelIntermediate) el.wrongLevelIntermediate.classList.add('active');
+    }
+  }
+
+  if (el.wrongLevelBeginner) {
+    el.wrongLevelBeginner.addEventListener('click', () => {
+      state.wrongLevel = 'beginner';
+      updateWrongLevelButtons();
+      renderWrongSection();
+    });
+  }
+
+  if (el.wrongLevelIntermediate) {
+    el.wrongLevelIntermediate.addEventListener('click', () => {
+      state.wrongLevel = 'intermediate';
+      updateWrongLevelButtons();
+      renderWrongSection();
+    });
+  }
+
+  function renderWrongSection() {
+    const wrongIds = getWrongData()[state.wrongLevel] || [];
+    const allWords = state.datasets[state.wrongLevel] || state.datasets.beginner;
+    const wrongWords = allWords.filter(w => wrongIds.includes(w.id));
+
+    if (el.wrongTotalText) {
+      const levelLabel = state.wrongLevel === 'beginner' ? '初級' : '中級';
+      el.wrongTotalText.textContent = `${levelLabel} 保存中の誤答: ${wrongWords.length} 件`;
+    }
+
+    if (el.wrongList) {
+      el.wrongList.innerHTML = '';
+      if (wrongWords.length === 0) {
+        el.wrongList.innerHTML = `
+          <div class="wrong-empty-state">
+            <div class="wrong-empty-icon">🎉</div>
+            <div class="wrong-empty-title">誤答ノートは空です！</div>
+            <p>クイズで間違えた問題がここに自動記録されます。</p>
+          </div>
+        `;
+        return;
+      }
+
+      wrongWords.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'wrong-item';
+        div.innerHTML = `
+          <div class="wrong-word-main">
+            <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">#${item.id}</span>
+            <span class="wrong-hangul">${item.hangul}</span>
+            <span class="wrong-japanese">${item.japanese}</span>
+            <span class="wrong-romaji">(${item.romaji})</span>
+          </div>
+          <div class="wrong-actions">
+            <button class="small-audio-btn" title="発音を聞く">🔊</button>
+            <button class="wrong-overcome-btn">✓ 克服 (削除)</button>
+          </div>
+        `;
+
+        div.querySelector('.small-audio-btn').onclick = (e) => {
+          e.stopPropagation();
+          speakKorean(item.hangul);
+        };
+
+        div.querySelector('.wrong-overcome-btn').onclick = (e) => {
+          e.stopPropagation();
+          removeWrongWord(state.wrongLevel, item.id);
+        };
+
+        el.wrongList.appendChild(div);
+      });
+    }
+  }
+
+  if (el.startWrongQuizBtn) {
+    el.startWrongQuizBtn.addEventListener('click', () => {
+      state.level = state.wrongLevel;
+      state.source = 'wrong';
+      el.levelCards.forEach(c => {
+        c.classList.toggle('selected', c.dataset.level === state.level);
+      });
+      startNewQuiz();
+    });
+  }
+
+  if (el.startWrongFcBtn) {
+    el.startWrongFcBtn.addEventListener('click', () => {
+      const wrongIds = getWrongData()[state.wrongLevel] || [];
+      const allWords = state.datasets[state.wrongLevel] || state.datasets.beginner;
+      const wrongWords = allWords.filter(w => wrongIds.includes(w.id));
+      if (wrongWords.length === 0) {
+        alert('復習対象の誤答単語がありません。');
+        return;
+      }
+      state.fcLevel = state.wrongLevel;
+      state.fcList = wrongWords;
+      state.fcIndex = 0;
+      state.fcFlipped = false;
+      updateFcLevelButtons();
+      renderFlashcard();
+      showSection(el.flashcardSection);
+    });
+  }
+
+  if (el.clearWrongBtn) {
+    el.clearWrongBtn.addEventListener('click', () => {
+      if (confirm(`【${state.wrongLevel === 'beginner' ? '初級' : '中級'}】の誤答ノートを一括クリアしますか？`)) {
+        clearWrongWords(state.wrongLevel);
+      }
     });
   }
 

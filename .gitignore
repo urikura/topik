@@ -10,6 +10,7 @@ topik-1671.pdf
 *.log
 npm-debug.log*
 
-# Node Modules (if any)
-node_modules/
+# Local Technical Documentation
+TECHNICAL_NOTES.md
+
 

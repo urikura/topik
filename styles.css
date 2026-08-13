@@ -1372,3 +1372,227 @@ input:checked + .slider:before {
     font-size: 0.85rem;
   }
 }
+
+/* --- Nav Badge & Buttons --- */
+.nav-badge {
+  background: #f59e0b;
+  color: #0f172a;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-full);
+  margin-left: 0.2rem;
+  line-height: 1;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #fff;
+  border: none;
+  padding: 0.85rem 1.75rem;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.btn-warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.35);
+  color: #fff;
+}
+
+/* --- Source Selection Grid --- */
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.source-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all 0.25 ease;
+}
+
+.source-card:hover:not(.disabled) {
+  border-color: var(--border-glow);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+
+.source-card.selected {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+}
+
+.source-card.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+.source-icon {
+  font-size: 1.8rem;
+}
+
+.source-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.source-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-main);
+}
+
+.source-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* --- Wrong Words Review Section --- */
+.wrong-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.wrong-count-text {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #fbbf24;
+}
+
+.wrong-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 550px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.wrong-item {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid #ef4444;
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.wrong-item:hover {
+  background: rgba(51, 65, 85, 0.7);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.wrong-word-main {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.wrong-hangul {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-main);
+  font-family: var(--font-kr);
+}
+
+.wrong-japanese {
+  font-size: 1.05rem;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.wrong-romaji {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.wrong-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.wrong-overcome-btn {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wrong-overcome-btn:hover {
+  background: rgba(16, 185, 129, 0.35);
+  color: #fff;
+}
+
+.wrong-empty-state {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  color: var(--text-muted);
+}
+
+.wrong-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+.wrong-empty-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.4rem;
+}
+

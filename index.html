@@ -17,8 +17,11 @@
     </div>
     
     <nav class="nav-tabs">
-      <button class="nav-btn active" id="tabQuizBtn">
+      <button class="nav-btn" id="tabQuizBtn">
         <span>✏️</span> クイズ
+      </button>
+      <button class="nav-btn" id="tabWrongBtn">
+        <span>⚠️</span> 復習帳 <span class="nav-badge hidden" id="navWrongBadge">0</span>
       </button>
       <button class="nav-btn" id="tabCardBtn">
         <span>🃏</span> 単語帳
@@ -84,8 +87,27 @@
         </div>
       </div>
 
+      <!-- Source Selection (All vs Wrong) -->
+      <div class="section-label">3. 出題対象を選択</div>
+      <div class="source-grid">
+        <div class="source-card selected" data-source="all" id="sourceAllCard">
+          <span class="source-icon">📚</span>
+          <div class="source-info">
+            <span class="source-title">全単語から出題</span>
+            <span class="source-desc" id="sourceAllDesc">全 1,671 単語からランダム抽出</span>
+          </div>
+        </div>
+        <div class="source-card" data-source="wrong" id="sourceWrongCard">
+          <span class="source-icon">⚠️</span>
+          <div class="source-info">
+            <span class="source-title">弱点克服モード</span>
+            <span class="source-desc" id="sourceWrongDesc">誤答リスト (0件) から集中出題</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Question Count Selection -->
-      <div class="section-label">3. 問題数を選択</div>
+      <div class="section-label">4. 問題数を選択</div>
       <div class="count-options">
         <button class="count-btn selected" data-count="10">10問</button>
         <button class="count-btn" data-count="20">20問</button>
@@ -195,6 +217,9 @@
         </div>
 
         <div class="action-btn-group">
+          <button class="btn-warning hidden" id="retryWrongBtn">
+            <span>⚠️</span> 今回間違えた問題だけで再挑戦
+          </button>
           <button class="btn-primary" id="retryQuizBtn">
             <span>🔄</span> もう一度挑戦
           </button>
@@ -202,6 +227,39 @@
             <span>🏠</span> 設定に戻る
           </button>
         </div>
+      </div>
+    </section>
+
+    <!-- 3.5 WRONG WORDS REVIEW SCREEN (復習帳) -->
+    <section id="wrongSection" class="glass-panel hidden">
+      <div class="setup-header" style="text-align: left; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 class="setup-title" style="margin-bottom: 0.25rem;">⚠️ 誤答復習帳 (弱点ノート)</h2>
+          <p class="setup-subtitle">クイズで間違えた単語が自動記録されます。繰り返し復習してマスターしましょう！</p>
+        </div>
+        <div class="level-switcher">
+          <button class="level-switch-btn active" id="wrongLevelBeginner">🌱 初級</button>
+          <button class="level-switch-btn" id="wrongLevelIntermediate">🌿 中級</button>
+        </div>
+      </div>
+
+      <div class="wrong-toolbar">
+        <div class="wrong-count-text" id="wrongTotalText">保存中の誤答: 0 件</div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button class="btn-primary" id="startWrongQuizBtn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+            <span>🚀</span> この弱点問題でクイズ開始
+          </button>
+          <button class="btn-secondary" id="startWrongFcBtn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+            <span>🃏</span> 単語カードで復習
+          </button>
+          <button class="btn-danger" id="clearWrongBtn" style="padding: 0.5rem 0.8rem; font-size: 0.85rem;">
+            🗑️ 一括クリア
+          </button>
+        </div>
+      </div>
+
+      <div class="wrong-list" id="wrongList">
+        <!-- Injected via JS -->
       </div>
     </section>
 
